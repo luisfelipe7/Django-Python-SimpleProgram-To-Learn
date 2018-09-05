@@ -1,0 +1,27 @@
+<!-- {{ question }} -->
+<!-- Antigua versión para ver las opciones de una pregunta y cuantos votos posee cada una 
+<h1>{{ question.question_text }}</h1>
+<ul>
+    {% for choice in question.choice_set.all %}
+    <li><a href="{% url 'polls:count' choice.id %}">{{ choice.choice_text }}</a></li>
+    {% endfor %}
+</ul>
+-->
+
+<!-- Titulo -->
+<h1>{{ question.question_text }}</h1>
+
+{% if error_message %}
+<p><strong>{{ error_message }}</strong></p>
+{% endif %}
+
+<form action="{% url 'polls:vote' question.id %}" method="post">
+    {% csrf_token %}
+    <!-- Cross Site Request Forgery protection-->
+    {% for choice in question.choice_set.all %}
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <label for="choice{{ forLoop.counter }}">{{ choice.choice_text }}</label> <!-- For is used like id in labels-->
+    <br> <!-- Salto de linea-->
+    {% endfor %}
+    <input type="submit" value="Vote">
+</form>
