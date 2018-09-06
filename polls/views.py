@@ -10,18 +10,69 @@ from django.shortcuts import render, get_object_or_404
 from django.template import loader
 from django.http import Http404
 from django.urls import reverse
+from django.views import generic
+from django.utils import timezone
+
+# ************ With Generic Views **************
+
+# Generic List View
+# Similarly, the ListView generic view uses a default template called <app name>/<model name>_list.html;
+# we use template_name to tell ListView to use our existing "polls/index.html" template.
 
 
-def index(request):  # Method for create a view an return it
-    return HttpResponse("Hello, world. You're at the polls index.")
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    # However, for ListView, the automatically generated context variable is question_list.
+    # To override this we provide the context_object_name attribute, specifying that we want
+    # to use latest_question_list instead
+    context_object_name = 'latest_question_list'
+
+    def get_queryset(self):
+        # Return the last five published questions, but return question with a pub_date of the future
+        # return Question.objects.order_by('-pub_date')[:5]
+        # Return the generic values
+        # Question.objects.filter(pub_date__lte=timezone.now()) returns a queryset containing Questions whose
+        # pub_date is less than or equal to - that is, earlier than or equal to - timezone.now.
+        return Question.objects.filter(
+            pub_date_lte=timezone.now()
+        ).order_by('-pub_date')[:5]
+        # Generic Detail View, it needs the primary key, so the URL change question_id to pk for the generic views
+        # By default, the DetailView generic view uses a template called <app name>/<model name>_detail.html.
+        # In our case, it would use the template "polls/question_detail.html".
 
 
-def detail(request, question_id):  # Method for looking a question
-    try:
-        question = Question.objects.get(pk=question_id)
-    except Question.DoesNotExist:
-        raise Http404("Question does not exist")
-    return render(request, 'polls/detail.html', {'question': question})
+class DetailView(generic.DetailView):
+    model = Question
+    template_name = 'polls/detail.html'
+
+    def get_queryset(self):
+        """
+        Excludes any questions that aren't published yet.
+        """
+        return Question.objects.filter(pub_date__lte=timezone.now())
+
+
+# For DetailView the question variable is provided automatically – since we’re using a Django model (Question),
+# Django is able to determine an appropriate name for the context variable.
+
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/result.html'
+
+
+# ************ Without Generic Views ************
+
+# def index(request):  # Method for create a view an return it
+#    return HttpResponse("Hello, world. You're at the polls index.")
+
+
+# def detail(request, question_id):  # Method for looking a question
+#    try:
+#        question = Question.objects.get(pk=question_id)
+#    except Question.DoesNotExist:
+#        raise Http404("Question does not exist")
+#    return render(request, 'polls/detail.html', {'question': question})
 
 # Short version of detail method
 # def detail(request, question_id):
@@ -35,13 +86,13 @@ def detail(request, question_id):  # Method for looking a question
 # With Try Exception
 
 
-def results(request, question_id):  # Method for looking the results of a question
-    # Without Template
-    # response = "You're looking at the results of question %s."
-    # return HttpResponse(response % question_id)
-    # With Template
-    question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/result.html', {'question': question})
+# def results(request, question_id):  # Method for looking the results of a question
+# Without Template
+# response = "You're looking at the results of question %s."
+# return HttpResponse(response % question_id)
+# With Template
+#    question = get_object_or_404(Question, pk=question_id)
+#    return render(request, 'polls/result.html', {'question': question})
 
 
 def vote(request, question_id):  # Voting on question
