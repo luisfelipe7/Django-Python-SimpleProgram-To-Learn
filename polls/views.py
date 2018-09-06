@@ -34,7 +34,7 @@ class IndexView(generic.ListView):
         # Question.objects.filter(pub_date__lte=timezone.now()) returns a queryset containing Questions whose
         # pub_date is less than or equal to - that is, earlier than or equal to - timezone.now.
         return Question.objects.filter(
-            pub_date_lte=timezone.now()
+            pub_date__lte=timezone.now()
         ).order_by('-pub_date')[:5]
         # Generic Detail View, it needs the primary key, so the URL change question_id to pk for the generic views
         # By default, the DetailView generic view uses a template called <app name>/<model name>_detail.html.
@@ -50,7 +50,6 @@ class DetailView(generic.DetailView):
         Excludes any questions that aren't published yet.
         """
         return Question.objects.filter(pub_date__lte=timezone.now())
-
 
 # For DetailView the question variable is provided automatically – since we’re using a Django model (Question),
 # Django is able to determine an appropriate name for the context variable.
