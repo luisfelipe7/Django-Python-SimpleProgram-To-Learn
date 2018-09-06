@@ -85,7 +85,9 @@ $ python manage.py runserver
 
 ## How to use it
 
-Coming soon!
+Enter to this URL's:
+* http://127.0.0.1:8000/polls/
+* http://127.0.0.1:8000/polls/idOfTheQuestion
 
 ## Credits
 
