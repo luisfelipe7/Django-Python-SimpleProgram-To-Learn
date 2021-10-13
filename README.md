@@ -37,12 +37,12 @@ $ pip install -U pip
 3.  Download or clone this repository in your folder
 ```bash
 # Clone this repository
-$ git clone https://github.com/luisfelipe7/Learning-Django
+$ git clone https://github.com/luisfelipe7/Django-SimpleProgram-To-Learn
 ```
 3. Go into the repository
 ```bash
 # Go into the repository
-$ cd Learning-Django
+$ cd Django-SimpleProgram-To-Learn
 ```
 
 4. Create a virtual environment
